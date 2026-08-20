@@ -1,0 +1,95 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "alerts": "Alerts",
+    "analytics": "Analytics",
+    "calendar": "Calendar",
+    "assistant": "AI Assistant",
+    "settings": "Settings"
+  },
+  "settings": {
+    "title": "Settings",
+    "connectedAccounts": "Connected Accounts",
+    "security": "Security & Access",
+    "apiKeys": "API Keys",
+    "language": "Language",
+    "timezone": "Timezone",
+    "languageSettings": "Language Settings",
+    "languageDesc": "Choose your preferred language for the application interface.",
+    "selectLanguage": "Select Language",
+    "english": "English",
+    "hindi": "Hindi",
+    "spanish": "Spanish (Español)",
+    "french": "French (Français)",
+    "german": "German (Deutsch)",
+    "chinese": "Chinese (中文)",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "saveSuccess": "Language updated successfully!"
+  },
+  "header": {
+    "search": "Search anything...",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "profile": {
+    "title": "User Profile",
+    "desc": "Manage your personal information and preferences.",
+    "picture": "Profile Picture",
+    "pictureDesc": "PNG, JPG or GIF up to 5MB.",
+    "pictureUpload": "Click the camera icon to upload a custom photo.",
+    "fullName": "Full Name",
+    "email": "Email Address",
+    "bio": "Bio",
+    "bioPlaceholder": "Tell us a little bit about yourself...",
+    "save": "Save Changes",
+    "saving": "Saving..."
+  },
+  "calendar": {
+    "title": "Calendar",
+    "desc": "Manage your upcoming social media posts and PR events.",
+    "today": "Today",
+    "newPost": "New Post"
+  },
+  "assistant": {
+    "title": "AI Assistant",
+    "desc": "Your intelligent copilot for content creation and PR strategy.",
+    "newChat": "New Chat",
+    "placeholder": "Ask anything..."
+  },
+  "analytics": {
+    "title": "Analytics Dashboard",
+    "desc": "Track your social media performance and PR metrics.",
+    "totalFollowers": "Total Followers",
+    "engagementRate": "Engagement Rate",
+    "totalPosts": "Total Posts",
+    "mentions": "Brand Mentions",
+    "growth": "Growth over time",
+    "performance": "Platform Performance"
+  },
+  "alerts": {
+    "title": "Alerts & Notifications",
+    "desc": "Stay updated with important PR events and system alerts.",
+    "all": "All",
+    "unread": "Unread",
+    "markAllRead": "Mark all as read"
+  },
+  "auth": {
+    "loginTitle": "Sign in to your account",
+    "loginDesc": "Public Relation Activity Management",
+    "email": "Email address",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "registerHere": "Register here",
+    "registerTitle": "Create an account",
+    "fullName": "Full Name",
+    "register": "Register",
+    "registering": "Registering...",
+    "hasAccount": "Already have an account?",
+    "loginHere": "Sign in here",
+    "poweredBy": "POWERED BY C-NET INFOTECH"
+  }
+}

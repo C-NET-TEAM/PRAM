@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: var(--color-primary);
+  --color-background: var(--color-background);
+  --color-card: var(--color-card);
+  --color-border: var(--color-border);
+  --color-foreground: var(--color-foreground);
+  --color-muted-foreground: var(--color-muted-foreground);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-danger: var(--color-danger);
+}
+
+@layer base {
+  :root {
+    --color-primary: #7C3AED; /* Vibrant Violet */
+    --color-background: #F4F4F5; /* Zinc 100 */
+    --color-card: #FFFFFF;
+    --color-border: #E4E4E7; /* Zinc 200 */
+    --color-foreground: #09090B; /* Zinc 950 */
+    --color-muted-foreground: #71717A; /* Zinc 500 */
+    --color-success: #10B981; /* Emerald 500 */
+    --color-warning: #F59E0B; /* Amber 500 */
+    --color-danger: #EF4444; /* Red 500 */
+  }
+
+  .dark {
+    --color-primary: #3B82F6;
+    --color-background: #0F172A;
+    /* dark background */
+    --color-card: #1E293B;
+    /* darker card */
+    --color-border: #334155;
+    /* dark border */
+    --color-foreground: #F8FAFC;
+    /* light text */
+    --color-muted-foreground: #94A3B8;
+    /* lighter text for muted */
+    --color-success: #22C55E;
+    --color-warning: #F59E0B;
+    --color-danger: #EF4444;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+}

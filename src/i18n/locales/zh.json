@@ -1,0 +1,95 @@
+{
+  "nav": {
+    "dashboard": "仪表板",
+    "alerts": "警报",
+    "analytics": "分析",
+    "calendar": "日历",
+    "assistant": "AI助手",
+    "settings": "设置"
+  },
+  "settings": {
+    "title": "设置",
+    "connectedAccounts": "关联账户",
+    "security": "安全与访问",
+    "apiKeys": "API 密钥",
+    "language": "语言",
+    "timezone": "时区",
+    "languageSettings": "语言设置",
+    "languageDesc": "选择您喜欢的应用程序界面语言。",
+    "selectLanguage": "选择语言",
+    "english": "英语 (English)",
+    "hindi": "印地语 (Hindi)",
+    "spanish": "西班牙语 (Español)",
+    "french": "法语 (Français)",
+    "german": "德语 (Deutsch)",
+    "chinese": "中文",
+    "saveChanges": "保存更改",
+    "saving": "保存中...",
+    "saveSuccess": "语言更新成功！"
+  },
+  "header": {
+    "search": "搜索...",
+    "notifications": "通知",
+    "profile": "个人资料",
+    "logout": "登出"
+  },
+  "profile": {
+    "title": "用户主页",
+    "desc": "管理您的个人信息和偏好。",
+    "picture": "个人头像",
+    "pictureDesc": "PNG、JPG 或 GIF，最大 5MB。",
+    "pictureUpload": "点击相机图标上传自定义照片。",
+    "fullName": "全名",
+    "email": "电子邮件",
+    "bio": "个人简介",
+    "bioPlaceholder": "介绍一下您自己...",
+    "save": "保存更改",
+    "saving": "保存中..."
+  },
+  "calendar": {
+    "title": "日历",
+    "desc": "管理您即将发布的社交媒体帖子和公关活动。",
+    "today": "今天",
+    "newPost": "新帖子"
+  },
+  "assistant": {
+    "title": "AI助手",
+    "desc": "内容创作和公关策略的智能副手。",
+    "newChat": "新聊天",
+    "placeholder": "问点什么..."
+  },
+  "analytics": {
+    "title": "分析仪表板",
+    "desc": "跟踪您的社交媒体表现和公关指标。",
+    "totalFollowers": "总粉丝数",
+    "engagementRate": "互动率",
+    "totalPosts": "总帖子数",
+    "mentions": "品牌提及",
+    "growth": "随时间增长",
+    "performance": "平台表现"
+  },
+  "alerts": {
+    "title": "警报与通知",
+    "desc": "随时了解重要的公关活动和系统警报。",
+    "all": "全部",
+    "unread": "未读",
+    "markAllRead": "全部标记为已读"
+  },
+  "auth": {
+    "loginTitle": "登录您的账户",
+    "loginDesc": "公共关系活动管理",
+    "email": "电子邮件",
+    "password": "密码",
+    "signIn": "登录",
+    "signingIn": "登录中...",
+    "noAccount": "还没有账户？",
+    "registerHere": "在此注册",
+    "registerTitle": "创建账户",
+    "fullName": "全名",
+    "register": "注册",
+    "registering": "注册中...",
+    "hasAccount": "已有账户？",
+    "loginHere": "在此登录",
+    "poweredBy": "POWERED BY C-NET INFOTECH"
+  }
+}

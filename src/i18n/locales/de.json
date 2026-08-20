@@ -1,0 +1,95 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "alerts": "Benachrichtigungen",
+    "analytics": "Analytik",
+    "calendar": "Kalender",
+    "assistant": "KI-Assistent",
+    "settings": "Einstellungen"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "connectedAccounts": "Verbundene Konten",
+    "security": "Sicherheit & Zugriff",
+    "apiKeys": "API-Schlüssel",
+    "language": "Sprache",
+    "timezone": "Zeitzone",
+    "languageSettings": "Spracheinstellungen",
+    "languageDesc": "Wählen Sie Ihre bevorzugte Sprache für die Benutzeroberfläche.",
+    "selectLanguage": "Sprache wählen",
+    "english": "Englisch (English)",
+    "hindi": "Hindi",
+    "spanish": "Spanisch (Español)",
+    "french": "Französisch (Français)",
+    "german": "Deutsch",
+    "chinese": "Chinesisch (中文)",
+    "saveChanges": "Änderungen speichern",
+    "saving": "Speichern...",
+    "saveSuccess": "Sprache erfolgreich aktualisiert!"
+  },
+  "header": {
+    "search": "Suche alles...",
+    "notifications": "Benachrichtigungen",
+    "profile": "Profil",
+    "logout": "Abmelden"
+  },
+  "profile": {
+    "title": "Benutzerprofil",
+    "desc": "Verwalten Sie Ihre persönlichen Informationen.",
+    "picture": "Profilbild",
+    "pictureDesc": "PNG, JPG oder GIF bis 5MB.",
+    "pictureUpload": "Klicken Sie auf das Kamerasymbol für ein eigenes Foto.",
+    "fullName": "Vollständiger Name",
+    "email": "E-Mail-Adresse",
+    "bio": "Biografie",
+    "bioPlaceholder": "Erzählen Sie uns ein wenig über sich...",
+    "save": "Speichern",
+    "saving": "Speichern..."
+  },
+  "calendar": {
+    "title": "Kalender",
+    "desc": "Verwalten Sie Ihre anstehenden Beiträge.",
+    "today": "Heute",
+    "newPost": "Neuer Beitrag"
+  },
+  "assistant": {
+    "title": "KI-Assistent",
+    "desc": "Ihr intelligenter Copilot für die Inhaltserstellung.",
+    "newChat": "Neuer Chat",
+    "placeholder": "Frag alles..."
+  },
+  "analytics": {
+    "title": "Analyse-Dashboard",
+    "desc": "Verfolgen Sie Ihre Social-Media-Leistung.",
+    "totalFollowers": "Gesamte Follower",
+    "engagementRate": "Interaktionsrate",
+    "totalPosts": "Gesamte Beiträge",
+    "mentions": "Markenerwähnungen",
+    "growth": "Wachstum im Zeitverlauf",
+    "performance": "Plattformleistung"
+  },
+  "alerts": {
+    "title": "Benachrichtigungen",
+    "desc": "Bleiben Sie über wichtige Ereignisse informiert.",
+    "all": "Alle",
+    "unread": "Ungelesen",
+    "markAllRead": "Alle als gelesen markieren"
+  },
+  "auth": {
+    "loginTitle": "Melden Sie sich an",
+    "loginDesc": "Management von PR-Aktivitäten",
+    "email": "E-Mail-Adresse",
+    "password": "Passwort",
+    "signIn": "Anmelden",
+    "signingIn": "Anmelden...",
+    "noAccount": "Sie haben kein Konto?",
+    "registerHere": "Hier registrieren",
+    "registerTitle": "Ein Konto erstellen",
+    "fullName": "Vollständiger Name",
+    "register": "Registrieren",
+    "registering": "Registrierung...",
+    "hasAccount": "Sie haben bereits ein Konto?",
+    "loginHere": "Hier anmelden",
+    "poweredBy": "POWERED BY C-NET INFOTECH"
+  }
+}

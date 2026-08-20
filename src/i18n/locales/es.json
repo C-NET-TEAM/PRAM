@@ -1,0 +1,95 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "alerts": "Alertas",
+    "analytics": "Análisis",
+    "calendar": "Calendario",
+    "assistant": "Asistente AI",
+    "settings": "Ajustes"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "connectedAccounts": "Cuentas Conectadas",
+    "security": "Seguridad y Acceso",
+    "apiKeys": "Claves API",
+    "language": "Idioma",
+    "timezone": "Zona horaria",
+    "languageSettings": "Configuración de Idioma",
+    "languageDesc": "Elija su idioma preferido para la interfaz de la aplicación.",
+    "selectLanguage": "Seleccionar Idioma",
+    "english": "Inglés (English)",
+    "hindi": "Hindi",
+    "spanish": "Español",
+    "french": "Francés (Français)",
+    "german": "Alemán (Deutsch)",
+    "chinese": "Chino (中文)",
+    "saveChanges": "Guardar Cambios",
+    "saving": "Guardando...",
+    "saveSuccess": "¡Idioma actualizado exitosamente!"
+  },
+  "header": {
+    "search": "Buscar cualquier cosa...",
+    "notifications": "Notificaciones",
+    "profile": "Perfil",
+    "logout": "Cerrar sesión"
+  },
+  "profile": {
+    "title": "Perfil de Usuario",
+    "desc": "Administra tu información personal y preferencias.",
+    "picture": "Foto de perfil",
+    "pictureDesc": "PNG, JPG o GIF hasta 5MB.",
+    "pictureUpload": "Haz clic en el icono de la cámara para subir una foto personalizada.",
+    "fullName": "Nombre completo",
+    "email": "Correo electrónico",
+    "bio": "Biografía",
+    "bioPlaceholder": "Cuéntanos un poco sobre ti...",
+    "save": "Guardar Cambios",
+    "saving": "Guardando..."
+  },
+  "calendar": {
+    "title": "Calendario",
+    "desc": "Administre sus próximas publicaciones en redes sociales.",
+    "today": "Hoy",
+    "newPost": "Nueva publicación"
+  },
+  "assistant": {
+    "title": "Asistente AI",
+    "desc": "Su copiloto inteligente para creación de contenido.",
+    "newChat": "Nuevo chat",
+    "placeholder": "Pregunta cualquier cosa..."
+  },
+  "analytics": {
+    "title": "Panel de Análisis",
+    "desc": "Realice un seguimiento de su rendimiento en redes sociales.",
+    "totalFollowers": "Seguidores Totales",
+    "engagementRate": "Tasa de Participación",
+    "totalPosts": "Publicaciones Totales",
+    "mentions": "Menciones de Marca",
+    "growth": "Crecimiento en el tiempo",
+    "performance": "Rendimiento de la Plataforma"
+  },
+  "alerts": {
+    "title": "Alertas y Notificaciones",
+    "desc": "Manténgase actualizado con eventos de relaciones públicas.",
+    "all": "Todos",
+    "unread": "No leídos",
+    "markAllRead": "Marcar todo como leído"
+  },
+  "auth": {
+    "loginTitle": "Inicia sesión",
+    "loginDesc": "Gestión de Actividades de Relaciones Públicas",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "signIn": "Iniciar sesión",
+    "signingIn": "Iniciando sesión...",
+    "noAccount": "¿No tienes una cuenta?",
+    "registerHere": "Regístrate aquí",
+    "registerTitle": "Crear una cuenta",
+    "fullName": "Nombre completo",
+    "register": "Registrarse",
+    "registering": "Registrando...",
+    "hasAccount": "¿Ya tienes una cuenta?",
+    "loginHere": "Inicia sesión aquí",
+    "poweredBy": "POWERED BY C-NET INFOTECH"
+  }
+}

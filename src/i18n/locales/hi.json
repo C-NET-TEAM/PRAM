@@ -1,0 +1,95 @@
+{
+  "nav": {
+    "dashboard": "डैशबोर्ड",
+    "alerts": "अलर्ट",
+    "analytics": "एनालिटिक्स",
+    "calendar": "कैलेंडर",
+    "assistant": "एआई असिस्टेंट",
+    "settings": "सेटिंग्स"
+  },
+  "settings": {
+    "title": "सेटिंग्स",
+    "connectedAccounts": "कनेक्टेड अकाउंट्स",
+    "security": "सुरक्षा और एक्सेस",
+    "apiKeys": "एपीआई कीज़",
+    "language": "भाषा",
+    "timezone": "समय क्षेत्र",
+    "languageSettings": "भाषा सेटिंग्स",
+    "languageDesc": "एप्लिकेशन इंटरफ़ेस के लिए अपनी पसंदीदा भाषा चुनें।",
+    "selectLanguage": "भाषा चुनें",
+    "english": "अंग्रेज़ी (English)",
+    "hindi": "हिंदी (Hindi)",
+    "spanish": "स्पेनिश (Español)",
+    "french": "फ़्रेंच (Français)",
+    "german": "जर्मन (Deutsch)",
+    "chinese": "चीनी (中文)",
+    "saveChanges": "बदलाव सेव करें",
+    "saving": "सेव हो रहा है...",
+    "saveSuccess": "भाषा सफलतापूर्वक अपडेट की गई!"
+  },
+  "header": {
+    "search": "कुछ भी खोजें...",
+    "notifications": "नोटिफिकेशन",
+    "profile": "प्रोफ़ाइल",
+    "logout": "लॉग आउट"
+  },
+  "profile": {
+    "title": "यूज़र प्रोफ़ाइल",
+    "desc": "अपनी व्यक्तिगत जानकारी और प्राथमिकताएं प्रबंधित करें।",
+    "picture": "प्रोफ़ाइल चित्र",
+    "pictureDesc": "PNG, JPG या GIF (अधिकतम 5MB)।",
+    "pictureUpload": "कस्टम फ़ोटो अपलोड करने के लिए कैमरा आइकन पर क्लिक करें।",
+    "fullName": "पूरा नाम",
+    "email": "ईमेल पता",
+    "bio": "परिचय",
+    "bioPlaceholder": "अपने बारे में कुछ बताएं...",
+    "save": "बदलाव सेव करें",
+    "saving": "सेव हो रहा है..."
+  },
+  "calendar": {
+    "title": "कैलेंडर",
+    "desc": "अपने आगामी सोशल मीडिया पोस्ट और पीआर ईवेंट प्रबंधित करें।",
+    "today": "आज",
+    "newPost": "नई पोस्ट"
+  },
+  "assistant": {
+    "title": "एआई असिस्टेंट",
+    "desc": "कंटेंट क्रिएशन और पीआर रणनीति के लिए आपका बुद्धिमान कोपायलट।",
+    "newChat": "नई चैट",
+    "placeholder": "कुछ भी पूछें..."
+  },
+  "analytics": {
+    "title": "एनालिटिक्स डैशबोर्ड",
+    "desc": "अपने सोशल मीडिया प्रदर्शन और पीआर मेट्रिक्स ट्रैक करें।",
+    "totalFollowers": "कुल फॉलोअर्स",
+    "engagementRate": "एंगेजमेंट रेट",
+    "totalPosts": "कुल पोस्ट",
+    "mentions": "ब्रांड मेंशन",
+    "growth": "समय के साथ विकास",
+    "performance": "प्लेटफ़ॉर्म प्रदर्शन"
+  },
+  "alerts": {
+    "title": "अलर्ट और नोटिफिकेशन",
+    "desc": "महत्वपूर्ण पीआर इवेंट्स और सिस्टम अलर्ट्स के साथ अपडेट रहें।",
+    "all": "सभी",
+    "unread": "बिना पढ़े",
+    "markAllRead": "सभी को पढ़ा हुआ मार्क करें"
+  },
+  "auth": {
+    "loginTitle": "अपने अकाउंट में साइन इन करें",
+    "loginDesc": "सार्वजनिक संबंध गतिविधि प्रबंधन (PRAM)",
+    "email": "ईमेल पता",
+    "password": "पासवर्ड",
+    "signIn": "साइन इन",
+    "signingIn": "साइन इन हो रहा है...",
+    "noAccount": "अकाउंट नहीं है?",
+    "registerHere": "यहां रजिस्टर करें",
+    "registerTitle": "अकाउंट बनाएं",
+    "fullName": "पूरा नाम",
+    "register": "रजिस्टर करें",
+    "registering": "रजिस्टर हो रहा है...",
+    "hasAccount": "पहले से अकाउंट है?",
+    "loginHere": "यहां साइन इन करें",
+    "poweredBy": "POWERED BY C-NET INFOTECH"
+  }
+}

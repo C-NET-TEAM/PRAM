@@ -1,0 +1,95 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "alerts": "Alertes",
+    "analytics": "Analyses",
+    "calendar": "Calendrier",
+    "assistant": "Assistant IA",
+    "settings": "Paramètres"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "connectedAccounts": "Comptes connectés",
+    "security": "Sécurité et accès",
+    "apiKeys": "Clés API",
+    "language": "Langue",
+    "timezone": "Fuseau horaire",
+    "languageSettings": "Paramètres de Langue",
+    "languageDesc": "Choisissez votre langue préférée pour l'interface.",
+    "selectLanguage": "Sélectionner la langue",
+    "english": "Anglais (English)",
+    "hindi": "Hindi",
+    "spanish": "Espagnol (Español)",
+    "french": "Français",
+    "german": "Allemand (Deutsch)",
+    "chinese": "Chinois (中文)",
+    "saveChanges": "Enregistrer les modifications",
+    "saving": "Enregistrement...",
+    "saveSuccess": "Langue mise à jour avec succès !"
+  },
+  "header": {
+    "search": "Rechercher...",
+    "notifications": "Notifications",
+    "profile": "Profil",
+    "logout": "Se déconnecter"
+  },
+  "profile": {
+    "title": "Profil Utilisateur",
+    "desc": "Gérez vos informations personnelles et vos préférences.",
+    "picture": "Photo de profil",
+    "pictureDesc": "PNG, JPG ou GIF jusqu'à 5 Mo.",
+    "pictureUpload": "Cliquez sur l'icône de l'appareil photo pour télécharger une photo.",
+    "fullName": "Nom complet",
+    "email": "Adresse e-mail",
+    "bio": "Biographie",
+    "bioPlaceholder": "Parlez-nous un peu de vous...",
+    "save": "Enregistrer",
+    "saving": "Enregistrement..."
+  },
+  "calendar": {
+    "title": "Calendrier",
+    "desc": "Gérez vos prochaines publications.",
+    "today": "Aujourd'hui",
+    "newPost": "Nouveau post"
+  },
+  "assistant": {
+    "title": "Assistant IA",
+    "desc": "Votre copilote intelligent pour la création de contenu.",
+    "newChat": "Nouvelle discussion",
+    "placeholder": "Demandez n'importe quoi..."
+  },
+  "analytics": {
+    "title": "Tableau de Bord",
+    "desc": "Suivez vos performances sur les réseaux sociaux.",
+    "totalFollowers": "Total des Abonnés",
+    "engagementRate": "Taux d'Engagement",
+    "totalPosts": "Total des Publications",
+    "mentions": "Mentions de Marque",
+    "growth": "Croissance",
+    "performance": "Performance de la Plateforme"
+  },
+  "alerts": {
+    "title": "Alertes et Notifications",
+    "desc": "Restez à jour avec les événements importants.",
+    "all": "Tout",
+    "unread": "Non lu",
+    "markAllRead": "Tout marquer comme lu"
+  },
+  "auth": {
+    "loginTitle": "Connectez-vous à votre compte",
+    "loginDesc": "Gestion des activités de relations publiques",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "signIn": "Se connecter",
+    "signingIn": "Connexion...",
+    "noAccount": "Vous n'avez pas de compte?",
+    "registerHere": "Inscrivez-vous ici",
+    "registerTitle": "Créer un compte",
+    "fullName": "Nom complet",
+    "register": "S'inscrire",
+    "registering": "Inscription...",
+    "hasAccount": "Vous avez déjà un compte?",
+    "loginHere": "Connectez-vous ici",
+    "poweredBy": "POWERED BY C-NET INFOTECH"
+  }
+}

@@ -23,14 +23,14 @@ const PORT = process.env.PORT || 3001;
 const JWT_SECRET = 'super-secret-key-for-development-only'; // In production, use env variables
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } }); // 50MB limit
 
-const uploadDir = process.env.RAILWAY_VOLUME_MOUNT_PATH 
+const uploadDir = process.env.RAILWAY_VOLUME_MOUNT_PATH
   ? path.join(process.env.RAILWAY_VOLUME_MOUNT_PATH, 'uploads')
   : path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
-const diskUpload = multer({ 
+const diskUpload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => cb(null, uploadDir),
     filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_'))
@@ -95,10 +95,10 @@ app.post('/api/auth/register', async (req, res) => {
 
     // Generate token
     const token = jwt.sign({ id: result.lastID, email }, JWT_SECRET, { expiresIn: '24h' });
-    
+
     // Fetch user without password
     const user = await db.get('SELECT id, name, email, bio, avatar FROM users WHERE id = ?', [result.lastID]);
-    
+
     res.status(201).json({ token, user });
   } catch (err) {
     console.error('Registration error:', err);
@@ -125,7 +125,7 @@ app.post('/api/auth/login', async (req, res) => {
     }
 
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '24h' });
-    
+
     // Remove password from response
     const { password: _, ...userWithoutPassword } = user;
     res.json({ token, user: userWithoutPassword });
@@ -153,7 +153,7 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
 app.put('/api/auth/password', authenticateToken, async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
-    
+
     if (!currentPassword || !newPassword) {
       return res.status(400).json({ error: 'Current password and new password are required' });
     }
@@ -169,7 +169,7 @@ app.put('/api/auth/password', authenticateToken, async (req, res) => {
     }
 
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-    
+
     await db.run(
       'UPDATE users SET password = ? WHERE id = ?',
       [hashedNewPassword, req.user.id]
@@ -202,7 +202,7 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
 app.put('/api/profile', authenticateToken, async (req, res) => {
   try {
     const { name, email, bio, avatar } = req.body;
-    
+
     if (!name || !email) {
       return res.status(400).json({ error: 'Name and email are required' });
     }
@@ -240,7 +240,7 @@ app.get('/api/settings', authenticateToken, async (req, res) => {
 app.put('/api/settings', authenticateToken, async (req, res) => {
   try {
     const { language, timezone, ai_provider, ai_custom_base_url, ai_api_key, ai_messages } = req.body;
-    
+
     // Check if exists
     const existing = await db.get('SELECT * FROM user_settings WHERE user_id = ?', [req.user.id]);
     if (existing) {
@@ -275,7 +275,7 @@ app.put('/api/settings', authenticateToken, async (req, res) => {
 app.post('/api/ai/chat', authenticateToken, async (req, res) => {
   try {
     const { model, messages } = req.body;
-    
+
     const apiKey = process.env.AI_API_KEY;
     const aiProvider = process.env.AI_PROVIDER || 'openai';
     const customBaseUrl = process.env.AI_CUSTOM_BASE_URL;
@@ -285,12 +285,12 @@ app.post('/api/ai/chat', authenticateToken, async (req, res) => {
     }
 
     let endpoint = 'https://api.openai.com/v1/chat/completions';
-    
+
     if (aiProvider === 'nvidia') {
       endpoint = 'https://integrate.api.nvidia.com/v1/chat/completions';
     } else if (aiProvider === 'custom' && customBaseUrl) {
-      endpoint = customBaseUrl.endsWith('/') 
-        ? `${customBaseUrl}chat/completions` 
+      endpoint = customBaseUrl.endsWith('/')
+        ? `${customBaseUrl}chat/completions`
         : `${customBaseUrl}/chat/completions`;
     }
 
@@ -348,25 +348,25 @@ app.post('/api/events', authenticateToken, diskUpload.single('file'), async (req
     } catch (e) {
       channels = req.body.channels || [];
     }
-    
+
     let media_path = req.file ? req.file.filename : null;
-    
+
     if (req.file) {
       const ext = path.extname(req.file.originalname).toLowerCase();
       if (['.png', '.webp', '.gif', '.tiff'].includes(ext)) {
         const newFilename = `${req.file.filename}.jpg`;
         const oldPath = req.file.path;
         const newPath = path.join(path.dirname(oldPath), newFilename);
-        
+
         await sharp(oldPath)
           .jpeg({ quality: 90 })
           .toFile(newPath);
-          
+
         fs.unlinkSync(oldPath); // delete original
         media_path = newFilename;
       }
     }
-    
+
     const result = await db.run(
       'INSERT INTO calendar_events (user_id, date, time, timezone, type, caption, channels, status, media_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [req.user.id, date, time, timezone, type, caption, JSON.stringify(channels), 'scheduled', media_path]
@@ -403,11 +403,11 @@ app.get('/api/auth/facebook', (req, res) => {
     const user = jwt.verify(token, JWT_SECRET); // Using same secret as above
     const clientId = process.env.FACEBOOK_CLIENT_ID;
     const redirectUri = process.env.FACEBOOK_CALLBACK_URL || 'http://localhost:3001/api/auth/facebook/callback';
-    
+
     // Pass user ID in the state parameter
     const state = user.id;
     const scope = 'pages_manage_posts,pages_read_engagement,pages_show_list,instagram_basic,instagram_content_publish,business_management';
-    
+
     const fbAuthUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}`;
     res.redirect(fbAuthUrl);
   } catch (err) {
@@ -446,7 +446,7 @@ app.get('/api/auth/facebook/callback', async (req, res) => {
 
     // Save or update in DB
     const existing = await db.get('SELECT * FROM social_accounts WHERE user_id = ? AND platform = ? AND provider_account_id = ?', [userId, 'Facebook', userData.id]);
-    
+
     if (existing) {
       await db.run('UPDATE social_accounts SET access_token = ? WHERE id = ?', [accessToken, existing.id]);
     } else {
@@ -493,12 +493,12 @@ app.get('/api/auth/facebook/callback', async (req, res) => {
 app.get('/api/auth/linkedin', (req, res) => {
   const token = req.query.token;
   if (!token) return res.status(401).send('Unauthorized');
-  
+
   try {
     const user = jwt.verify(token, JWT_SECRET);
     const clientId = process.env.LINKEDIN_CLIENT_ID;
     const redirectUri = process.env.LINKEDIN_CALLBACK_URL || 'http://localhost:3001/api/auth/linkedin/callback';
-    
+
     const state = user.id;
     const linkedinAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=w_member_social%20openid%20profile%20email`;
     res.redirect(linkedinAuthUrl);
@@ -510,14 +510,14 @@ app.get('/api/auth/linkedin', (req, res) => {
 app.get('/api/auth/linkedin/callback', async (req, res) => {
   const code = req.query.code;
   const userId = req.query.state;
-  
+
   if (!code || !userId) return res.status(400).send('Missing code or state');
-  
+
   try {
     const clientId = process.env.LINKEDIN_CLIENT_ID;
     const clientSecret = process.env.LINKEDIN_CLIENT_SECRET;
     const redirectUri = process.env.LINKEDIN_CALLBACK_URL || 'http://localhost:3001/api/auth/linkedin/callback';
-    
+
     const tokenResponse = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', null, {
       params: {
         grant_type: 'authorization_code',
@@ -528,18 +528,18 @@ app.get('/api/auth/linkedin/callback', async (req, res) => {
       },
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
-    
+
     const accessToken = tokenResponse.data.access_token;
-    
+
     const profileResponse = await axios.get('https://api.linkedin.com/v2/userinfo', {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
-    
+
     const urn = profileResponse.data.sub;
     const name = profileResponse.data.name || 'LinkedIn User';
-    
+
     const existing = await db.get('SELECT * FROM social_accounts WHERE user_id = ? AND platform = ?', [userId, 'LinkedIn']);
-    
+
     if (existing) {
       await db.run(
         'UPDATE social_accounts SET access_token = ?, provider_account_id = ?, username = ? WHERE id = ?',
@@ -551,7 +551,7 @@ app.get('/api/auth/linkedin/callback', async (req, res) => {
         [userId, 'LinkedIn', urn, name, accessToken]
       );
     }
-    
+
     res.send('<script>window.close();</script>');
   } catch (error) {
     console.error('LinkedIn Auth Error:', error.response?.data || error.message);
@@ -563,19 +563,19 @@ app.get('/api/auth/linkedin/callback', async (req, res) => {
 app.get('/api/auth/twitter', (req, res) => {
   const token = req.query.token;
   if (!token) return res.status(401).send('Unauthorized');
-  
+
   try {
     const user = jwt.verify(token, JWT_SECRET);
     const client = new TwitterApi({
       clientId: process.env.TWITTER_CLIENT_ID,
       clientSecret: process.env.TWITTER_CLIENT_SECRET
     });
-    
+
     const callbackUrl = process.env.TWITTER_CALLBACK_URL || 'http://localhost:3001/api/auth/twitter/callback';
     const { url, codeVerifier, state } = client.generateOAuth2AuthLink(callbackUrl, {
       scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access']
     });
-    
+
     twitterClients.set(state, { codeVerifier, userId: user.id });
     res.redirect(url);
   } catch (e) {
@@ -586,32 +586,32 @@ app.get('/api/auth/twitter', (req, res) => {
 app.get('/api/auth/twitter/callback', async (req, res) => {
   const { state, code } = req.query;
   if (!state || !code) return res.status(400).send('Missing state or code');
-  
+
   const sessionData = twitterClients.get(state);
   if (!sessionData) return res.status(400).send('Invalid state or session expired');
-  
+
   twitterClients.delete(state);
-  
+
   try {
     const client = new TwitterApi({
       clientId: process.env.TWITTER_CLIENT_ID,
       clientSecret: process.env.TWITTER_CLIENT_SECRET
     });
-    
+
     const callbackUrl = process.env.TWITTER_CALLBACK_URL || 'http://localhost:3001/api/auth/twitter/callback';
     const { client: loggedClient, accessToken, refreshToken } = await client.loginWithOAuth2({
       code,
       codeVerifier: sessionData.codeVerifier,
       redirectUri: callbackUrl
     });
-    
+
     const currentUser = await loggedClient.v2.me();
     const providerAccountId = currentUser.data.id;
     const username = currentUser.data.username;
     const tokens = JSON.stringify({ accessToken, refreshToken });
-    
+
     const existing = await db.get('SELECT * FROM social_accounts WHERE user_id = ? AND platform = ?', [sessionData.userId, 'X']);
-    
+
     if (existing) {
       await db.run(
         'UPDATE social_accounts SET access_token = ?, provider_account_id = ?, username = ? WHERE id = ?',
@@ -623,7 +623,7 @@ app.get('/api/auth/twitter/callback', async (req, res) => {
         [sessionData.userId, 'X', providerAccountId, username, tokens]
       );
     }
-    
+
     res.send('<script>window.close();</script>');
   } catch (error) {
     console.error('Twitter Auth Error:', error);
@@ -649,18 +649,18 @@ app.post('/api/social/post', authenticateToken, upload.single('file'), async (re
   } catch (e) {
     platforms = req.body.platforms || [];
   }
-  
+
   const { content, type = 'text' } = req.body;
   const userId = req.user.id;
   const file = req.file;
 
   try {
     const results = [];
-    
+
     for (const platform of platforms) {
       // Find the user's account for this platform
       const account = await db.get('SELECT * FROM social_accounts WHERE user_id = ? AND platform = ?', [userId, platform]);
-      
+
       if (!account) {
         results.push({ platform, status: 'failed', error: 'Not connected' });
         continue;
@@ -671,39 +671,39 @@ app.post('/api/social/post', authenticateToken, upload.single('file'), async (re
           // Get Pages the user manages
           const pagesRes = await fetch(`https://graph.facebook.com/me/accounts?access_token=${account.access_token}`);
           const pagesData = await pagesRes.json();
-          
+
           if (!pagesData.data || pagesData.data.length === 0) {
             results.push({ platform, status: 'failed', error: 'No Facebook Page found to post to. Create a Page first.' });
             continue;
           }
-          
+
           const page = pagesData.data[0];
           const pageAccessToken = page.access_token;
           const pageId = page.id;
 
           // Post to the page
           let postEndpoint = `https://graph.facebook.com/${pageId}/feed`;
-          
+
           let formData = new FormData();
           formData.append('access_token', pageAccessToken);
-          
+
           if (type === 'image' && file) {
-             postEndpoint = `https://graph.facebook.com/${pageId}/photos`;
-             formData.append('message', content || '');
-             formData.append('source', new Blob([file.buffer], { type: file.mimetype }), file.originalname);
+            postEndpoint = `https://graph.facebook.com/${pageId}/photos`;
+            formData.append('message', content || '');
+            formData.append('source', new Blob([file.buffer], { type: file.mimetype }), file.originalname);
           } else if (type === 'video' && file) {
-             postEndpoint = `https://graph.facebook.com/${pageId}/videos`;
-             formData.append('description', content || '');
-             formData.append('source', new Blob([file.buffer], { type: file.mimetype }), file.originalname);
+            postEndpoint = `https://graph.facebook.com/${pageId}/videos`;
+            formData.append('description', content || '');
+            formData.append('source', new Blob([file.buffer], { type: file.mimetype }), file.originalname);
           } else {
-             formData.append('message', content || '');
+            formData.append('message', content || '');
           }
-          
+
           const postRes = await fetch(postEndpoint, {
             method: 'POST',
             body: formData
           });
-          
+
           const postData = await postRes.json();
           if (postData.error) {
             results.push({ platform, status: 'failed', error: postData.error.message });
@@ -729,10 +729,10 @@ cron.schedule('* * * * *', async () => {
   try {
     const now = new Date();
     const events = await db.all("SELECT * FROM calendar_events WHERE status = 'scheduled'");
-    
+
     for (const event of events) {
       const eventTime = new Date(event.date);
-    const [hours, minutes] = event.time.split(':');
+      const [hours, minutes] = event.time.split(':');
       eventTime.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
 
       if (now >= eventTime) {
@@ -765,7 +765,7 @@ cron.schedule('* * * * *', async () => {
                 let postEndpoint = `https://graph.facebook.com/${page.id}/feed`;
                 let formData = new FormData();
                 formData.append('access_token', page.access_token);
-                
+
                 if (event.type === 'image' && event.media_path) {
                   postEndpoint = `https://graph.facebook.com/${page.id}/photos`;
                   formData.append('message', event.caption || '');
@@ -788,7 +788,7 @@ cron.schedule('* * * * *', async () => {
 
                 const postRes = await fetch(postEndpoint, { method: 'POST', body: formData });
                 const postData = await postRes.json();
-                
+
                 if (!postData.error) {
                   successCount++;
                   lastPostId = postData.id;
@@ -800,7 +800,7 @@ cron.schedule('* * * * *', async () => {
               console.error('Cron FB Error:', e.message);
             }
           }
-          
+
           if (platform === 'Instagram') {
             try {
               if (!event.media_path) {
@@ -809,33 +809,33 @@ cron.schedule('* * * * *', async () => {
               }
               const pagesRes = await fetch(`https://graph.facebook.com/me/accounts?access_token=${account.access_token}`);
               const pagesData = await pagesRes.json();
-              
+
               if (pagesData.data && pagesData.data.length > 0) {
                 const page = pagesData.data[0];
-                
+
                 const igRes = await fetch(`https://graph.facebook.com/v17.0/${page.id}?fields=instagram_business_account&access_token=${page.access_token}`);
                 const igData = await igRes.json();
-                
+
                 if (igData.instagram_business_account) {
                   const igAccountId = igData.instagram_business_account.id;
-                  
+
                   if (!process.env.PUBLIC_URL) {
-                     console.error('Cron IG Error: PUBLIC_URL is missing in .env. Run localtunnel to test locally.');
-                     continue;
+                    console.error('Cron IG Error: PUBLIC_URL is missing in .env. Run localtunnel to test locally.');
+                    continue;
                   }
-                  
+
                   const publicMediaUrl = `${process.env.PUBLIC_URL}/uploads/${event.media_path}`;
                   let containerEndpoint = `https://graph.facebook.com/v17.0/${igAccountId}/media?access_token=${page.access_token}&caption=${encodeURIComponent(event.caption || '')}`;
-                  
+
                   if (event.type === 'image') {
                     containerEndpoint += `&image_url=${encodeURIComponent(publicMediaUrl)}`;
                   } else if (event.type === 'video') {
                     containerEndpoint += `&media_type=VIDEO&video_url=${encodeURIComponent(publicMediaUrl)}`;
                   }
-                  
+
                   const containerRes = await fetch(containerEndpoint, { method: 'POST' });
                   const containerData = await containerRes.json();
-                  
+
                   if (containerData.id) {
                     // Instagram needs time to process the media before we can publish it.
                     let publishData = null;
@@ -854,7 +854,7 @@ cron.schedule('* * * * *', async () => {
                         // 9007: Media not ready to be published yet. Wait and retry.
                         retries--;
                         delay += 3000; // Increase wait time for next retry
-                        console.log(`Cron IG: Media not ready, retrying in ${delay/1000}s... (${retries} retries left)`);
+                        console.log(`Cron IG: Media not ready, retrying in ${delay / 1000}s... (${retries} retries left)`);
                       } else {
                         break; // Other error, exit loop
                       }
@@ -901,15 +901,15 @@ cron.schedule('* * * * *', async () => {
                       serviceRelationships: [{ relationshipType: "OWNER", identifier: "urn:li:userGeneratedContent" }]
                     }
                   }, { headers: { Authorization: `Bearer ${account.access_token}` } });
-                  
+
                   const uploadUrl = registerRes.data.value.uploadMechanism["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"].uploadUrl;
                   const asset = registerRes.data.value.asset;
-                  
+
                   const fileBuffer = fs.readFileSync(filePath);
                   await axios.post(uploadUrl, fileBuffer, {
                     headers: { 'Content-Type': 'application/octet-stream', 'Authorization': `Bearer ${account.access_token}` }
                   });
-                  
+
                   requestBody.specificContent["com.linkedin.ugc.ShareContent"].shareMediaCategory = "IMAGE";
                   requestBody.specificContent["com.linkedin.ugc.ShareContent"].media = [
                     { status: "READY", media: asset }
@@ -920,7 +920,7 @@ cron.schedule('* * * * *', async () => {
               const postRes = await axios.post('https://api.linkedin.com/v2/ugcPosts', requestBody, {
                 headers: { Authorization: `Bearer ${account.access_token}` }
               });
-              
+
               if (postRes.data && postRes.data.id) {
                 successCount++;
                 lastPostId = postRes.data.id;
@@ -934,16 +934,16 @@ cron.schedule('* * * * *', async () => {
             try {
               const tokens = JSON.parse(account.access_token);
               const client = new TwitterApi(tokens.accessToken);
-              
+
               let tweetOptions = { text: event.caption || '' };
               if (event.media_path) {
                 const filePath = path.join(__dirname, 'uploads', event.media_path);
                 if (fs.existsSync(filePath)) {
-                   const mediaId = await client.v1.uploadMedia(filePath);
-                   tweetOptions.media = { media_ids: [mediaId] };
+                  const mediaId = await client.v1.uploadMedia(filePath);
+                  tweetOptions.media = { media_ids: [mediaId] };
                 }
               }
-              
+
               const tweetResponse = await client.v2.tweet(tweetOptions);
               if (tweetResponse.data && tweetResponse.data.id) {
                 successCount++;

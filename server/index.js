@@ -19,7 +19,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
 const JWT_SECRET = 'super-secret-key-for-development-only'; // In production, use env variables
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } }); // 50MB limit
 
@@ -977,10 +977,16 @@ cron.schedule('* * * * *', async () => {
 
 // Serve static frontend in production
 app.use(express.static(path.join(__dirname, '../dist')));
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Backend server running on http://0.0.0.0:${PORT}`);
+app.listen(PORT, '::', () => {
+  console.log(`Backend server running on http://[::]:${PORT}`);
 });

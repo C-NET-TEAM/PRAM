@@ -17,7 +17,7 @@ export default function AnalyticsPage() {
 
   return (
     <div className="space-y-6 pb-10">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full min-w-0">
         <div>
           <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <TrendingUp className="w-6 h-6 text-primary" />
@@ -26,7 +26,7 @@ export default function AnalyticsPage() {
           <p className="text-muted-foreground">{t('analytics.desc', 'Track your performance and audience growth.')}</p>
         </div>
         
-        <div className="flex bg-card p-1 rounded-xl border border-border shadow-sm overflow-x-auto max-w-full">
+        <div className="flex bg-card p-1 rounded-xl border border-border shadow-sm overflow-x-auto w-full sm:w-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
           {FILTERS.map(filter => (
             <button
               key={filter}
@@ -52,7 +52,7 @@ export default function AnalyticsPage() {
 
       {/* Charts row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 min-w-0 overflow-hidden">
           <CardHeader>
             <h3 className="text-lg font-bold text-foreground">{t('analytics.growth', 'Performance Overview')}</h3>
           </CardHeader>
@@ -84,7 +84,7 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-0 overflow-hidden">
           <CardHeader>
             <h3 className="text-lg font-bold text-foreground">{t('analytics.performance', 'Platform Distribution')}</h3>
           </CardHeader>
@@ -123,7 +123,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Top Posts Table */}
-      <Card>
+      <Card className="min-w-0 overflow-hidden">
         <CardHeader>
           <h3 className="text-lg font-bold text-foreground">Top Performing Posts</h3>
         </CardHeader>

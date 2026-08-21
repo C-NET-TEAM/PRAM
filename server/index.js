@@ -436,7 +436,22 @@ app.get('/api/auth/facebook/callback', async (req, res) => {
 
     if (tokenData.error) throw new Error(tokenData.error.message);
 
-    const accessToken = tokenData.access_token;
+    let accessToken = tokenData.access_token;
+
+    // --- Exchange short-lived token for long-lived token (valid for 60 days) ---
+    try {
+      const longLivedUrl = `https://graph.facebook.com/v19.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${clientId}&client_secret=${clientSecret}&fb_exchange_token=${accessToken}`;
+      const longLivedResponse = await fetch(longLivedUrl);
+      const longLivedData = await longLivedResponse.json();
+      
+      if (longLivedData.access_token) {
+        accessToken = longLivedData.access_token;
+        console.log('Successfully acquired long-lived Facebook token');
+      }
+    } catch (exchangeErr) {
+      console.error('Failed to exchange for long-lived token:', exchangeErr);
+    }
+    // ---------------------------------------------------------------------------
 
     // Get user info to fetch a name/id
     const userResponse = await fetch(`https://graph.facebook.com/me?fields=id,name&access_token=${accessToken}`);

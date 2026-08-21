@@ -282,10 +282,6 @@ export default function SettingsPage() {
                         </>
                       ) : (
                         <>
-                          <Button variant="secondary" size="sm" className="flex-1 sm:flex-none">
-                            <Key className="w-4 h-4 mr-2" />
-                            API
-                          </Button>
                           <Button
                             size="sm"
                             onClick={() => handleConnect(channel.id)}

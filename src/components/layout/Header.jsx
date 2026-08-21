@@ -69,7 +69,7 @@ export function Header({ collapsed, setCollapsed, isMobile }) {
           </button>
 
           {isAlertsOpen && (
-            <div className="absolute -right-4 sm:right-0 top-full mt-3 w-[calc(100vw-2rem)] sm:w-96 max-w-[360px] sm:max-w-none max-h-[420px] overflow-y-auto bg-card border border-border/60 rounded-2xl shadow-2xl z-50 p-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+            <div className="fixed inset-x-4 top-[80px] sm:absolute sm:inset-auto sm:-right-4 sm:top-full sm:mt-3 sm:w-96 max-h-[420px] overflow-y-auto bg-card border border-border/60 rounded-2xl shadow-2xl z-50 p-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
               <div className="px-4 py-3 border-b border-border/50 flex justify-between items-center sticky top-0 bg-card/95 backdrop-blur-sm z-10">
                 <h3 className="font-bold text-base text-foreground flex items-center gap-2">
                   {t('header.notifications', 'Notifications')}

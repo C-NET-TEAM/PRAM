@@ -28,7 +28,7 @@ export function Sidebar({ collapsed, setCollapsed, isMobile }) {
     <aside
       className={twMerge(
         clsx(
-          'fixed top-0 left-0 h-screen bg-card border-r border-border z-40 transition-all duration-300 flex flex-col',
+          'fixed top-0 left-0 h-[100dvh] bg-card border-r border-border z-40 transition-all duration-300 flex flex-col',
           isMobile 
             ? (collapsed ? '-translate-x-full w-[280px]' : 'translate-x-0 w-[280px]')
             : (collapsed ? 'w-20' : 'w-[280px]')

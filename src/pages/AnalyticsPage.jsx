@@ -57,29 +57,31 @@ export default function AnalyticsPage() {
             <h3 className="text-lg font-bold text-foreground">{t('analytics.growth', 'Performance Overview')}</h3>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px] w-full min-w-0">
-              <ResponsiveContainer width="99%" height="100%">
-                <AreaChart data={MOCK_ANALYTICS.performanceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorReach" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorEngagement" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#22C55E" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#22C55E" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--color-muted-foreground)', fontSize: 12 }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--color-muted-foreground)', fontSize: 12 }} />
-                  <Tooltip 
-                    contentStyle={{ borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                  />
-                  <Area type="monotone" dataKey="reach" stroke="var(--color-primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorReach)" />
-                  <Area type="monotone" dataKey="engagement" stroke="#22C55E" strokeWidth={3} fillOpacity={1} fill="url(#colorEngagement)" />
-                </AreaChart>
-              </ResponsiveContainer>
+            <div className="h-[300px] w-full min-w-0 relative">
+              <div className="absolute inset-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={MOCK_ANALYTICS.performanceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorReach" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="colorEngagement" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#22C55E" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#22C55E" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--color-muted-foreground)', fontSize: 12 }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--color-muted-foreground)', fontSize: 12 }} width={40} />
+                    <Tooltip 
+                      contentStyle={{ borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    />
+                    <Area type="monotone" dataKey="reach" stroke="var(--color-primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorReach)" />
+                    <Area type="monotone" dataKey="engagement" stroke="#22C55E" strokeWidth={3} fillOpacity={1} fill="url(#colorEngagement)" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -89,23 +91,25 @@ export default function AnalyticsPage() {
             <h3 className="text-lg font-bold text-foreground">{t('analytics.performance', 'Platform Distribution')}</h3>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center">
-            <div className="h-[250px] w-full min-w-0">
-              <ResponsiveContainer width="99%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={MOCK_ANALYTICS.platformDistribution}
-                    innerRadius={60}
-                    outerRadius={90}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {MOCK_ANALYTICS.platformDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}/>
-                </PieChart>
-              </ResponsiveContainer>
+            <div className="h-[250px] w-full min-w-0 relative">
+              <div className="absolute inset-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={MOCK_ANALYTICS.platformDistribution}
+                      innerRadius={60}
+                      outerRadius={90}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {MOCK_ANALYTICS.platformDistribution.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}/>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             </div>
             <div className="w-full mt-4 space-y-2">
               {MOCK_ANALYTICS.platformDistribution.map(platform => (
@@ -127,8 +131,8 @@ export default function AnalyticsPage() {
         <CardHeader>
           <h3 className="text-lg font-bold text-foreground">Top Performing Posts</h3>
         </CardHeader>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-sm text-left min-w-[500px]">
             <thead className="text-xs text-muted-foreground uppercase bg-gray-50 border-b border-border">
               <tr>
                 <th className="px-6 py-4 font-medium">Post Content</th>

@@ -27,7 +27,7 @@ export function AppLayout() {
   }, []);
 
   return (
-    <div className="min-h-[100dvh] bg-background flex overflow-hidden font-sans">
+    <div className="min-h-[100dvh] w-full bg-background flex overflow-hidden font-sans">
       {isMobile && !collapsed && (
         <div
           className="fixed inset-0 bg-black/20 z-30 transition-opacity"
@@ -40,7 +40,7 @@ export function AppLayout() {
       <main
         className={twMerge(
           clsx(
-            'flex-1 flex flex-col min-h-[100dvh] transition-all duration-300 relative',
+            'flex-1 flex flex-col min-h-[100dvh] transition-all duration-300 relative min-w-0',
             collapsed ? 'lg:ml-20' : 'lg:ml-[280px]',
             isMobile && 'ml-0'
           )

@@ -154,8 +154,11 @@ export default function AnalyticsPage() {
                     }} />
                     <span className="text-sm font-medium text-foreground">{platform.name}</span>
                   </div>
+                ))}
+              </div>
           </CardContent>
         </Card>
+        </div>
       </div>
 
       {/* Top Posts Table */}

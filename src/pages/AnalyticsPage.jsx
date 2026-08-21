@@ -14,7 +14,17 @@ const FILTERS = ['7 Days', '15 Days', '30 Days', '3 Months', '6 Months', '1 Year
 export default function AnalyticsPage() {
   const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState('30 Days');
-  const [analyticsData, setAnalyticsData] = useState(MOCK_ANALYTICS);
+  const [analyticsData, setAnalyticsData] = useState({
+    overview: [
+      { label: 'Total Reach', value: '-', change: '', trend: 'neutral' },
+      { label: 'Published Posts', value: '-', change: '', trend: 'neutral' },
+      { label: 'Scheduled', value: '-', change: '', trend: 'neutral' },
+      { label: 'Failed', value: '-', change: '', trend: 'neutral' }
+    ],
+    performanceData: [],
+    platformDistribution: [{ name: 'None', value: 1, color: '#E2E8F0' }],
+    topPosts: []
+  });
   const [loading, setLoading] = useState(true);
 
   React.useEffect(() => {

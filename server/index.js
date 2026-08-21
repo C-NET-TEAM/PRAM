@@ -1125,15 +1125,15 @@ cron.schedule('0 */4 * * *', async () => {
           await db.run("INSERT INTO analytics_cache (user_id, platform, total_reach) VALUES (?, ?, ?)", [event.user_id, platform, reach]);
         }
 
-        // Generate milestone notification if reach is notably high (e.g. > 100)
-        // Here we just mock a milestone at 100 for demonstration if it hasn't been notified yet.
-        if (reach > 100) {
-           const notifExists = await db.get("SELECT * FROM notifications WHERE user_id = ? AND title LIKE '%Milestone%' AND message LIKE ?", [event.user_id, `%${event.social_post_id}%`]);
+        // Generate milestone notification if reach is notably high (e.g. > 150)
+        // Here we just mock a milestone at 150 for demonstration if it hasn't been notified yet.
+        if (reach >= 150 || engagement >= 150) {
+           const notifExists = await db.get("SELECT * FROM notifications WHERE user_id = ? AND title LIKE '%Trending%' AND message LIKE ?", [event.user_id, `%${event.social_post_id}%`]);
            if (!notifExists) {
              await db.run("INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)", [
                event.user_id, 
-               'Analytics Milestone! 🎉', 
-               `Your recent post (${event.social_post_id}) just reached over ${reach} people!`,
+               'Trending Post! 🔥', 
+               `Your recent post (${event.social_post_id}) just crossed 150+ likes/reach! Keep it up.`,
                'success'
              ]);
            }

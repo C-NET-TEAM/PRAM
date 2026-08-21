@@ -12,10 +12,20 @@ export function Header({ collapsed, setCollapsed, isMobile }) {
   const navigate = useNavigate();
   const [isAlertsOpen, setIsAlertsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const alertsRef = useRef(null);
   const profileRef = useRef(null);
 
   useEffect(() => {
+    fetch('/api/notifications', {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) setNotifications(data);
+      })
+      .catch(console.error);
+
     const handleClickOutside = (event) => {
       if (alertsRef.current && !alertsRef.current.contains(event.target)) {
         setIsAlertsOpen(false);
@@ -28,6 +38,32 @@ export function Header({ collapsed, setCollapsed, isMobile }) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const markAllRead = async () => {
+    try {
+      await fetch('/api/notifications/read-all', {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      setNotifications(notifications.map(n => ({ ...n, is_read: 1 })));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const markAsRead = async (id) => {
+    try {
+      await fetch(`/api/notifications/${id}/read`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: 1 } : n));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const unreadCount = notifications.filter(n => !n.is_read).length;
 
   const getPageTitle = () => {
     switch (location.pathname) {
@@ -65,7 +101,7 @@ export function Header({ collapsed, setCollapsed, isMobile }) {
             className="p-2 rounded-xl text-muted-foreground hover:bg-gray-100 hover:text-foreground transition-colors relative"
           >
             <Bell className="w-5 h-5" />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-[#EF4444] rounded-full border-2 border-card"></span>
+            {unreadCount > 0 && <span className="absolute top-2 right-2 w-2 h-2 bg-[#EF4444] rounded-full border-2 border-card"></span>}
           </button>
 
           {isAlertsOpen && (
@@ -73,12 +109,16 @@ export function Header({ collapsed, setCollapsed, isMobile }) {
               <div className="px-4 py-3 border-b border-border/50 flex justify-between items-center sticky top-0 bg-card/95 backdrop-blur-sm z-10">
                 <h3 className="font-bold text-base text-foreground flex items-center gap-2">
                   {t('header.notifications', 'Notifications')}
-                  <span className="bg-primary text-white text-[10px] px-2 py-0.5 rounded-full font-bold">New</span>
+                  {unreadCount > 0 && <span className="bg-primary text-white text-[10px] px-2 py-0.5 rounded-full font-bold">{unreadCount} New</span>}
                 </h3>
-                <button className="text-xs text-primary font-medium hover:text-[#1D4ED8] transition-colors">Mark all as read</button>
+                {unreadCount > 0 && (
+                  <button onClick={markAllRead} className="text-xs text-primary font-medium hover:text-[#1D4ED8] transition-colors">Mark all as read</button>
+                )}
               </div>
               <div className="p-2 space-y-1 mt-1">
-                {MOCK_ALERTS.map(alert => {
+                {notifications.length === 0 ? (
+                   <p className="text-sm text-muted-foreground text-center py-4">No notifications yet.</p>
+                ) : notifications.map(alert => {
                   let Icon = CheckCircle2;
                   let iconColor = "text-[#10B981]";
                   let bgColor = "bg-[#10B981]/10";
@@ -87,24 +127,33 @@ export function Header({ collapsed, setCollapsed, isMobile }) {
                     Icon = AlertTriangle;
                     iconColor = "text-[#F59E0B]";
                     bgColor = "bg-[#F59E0B]/10";
-                  }
-                  if (alert.type === 'danger') {
+                  } else if (alert.type === 'error') {
                     Icon = AlertCircle;
                     iconColor = "text-[#EF4444]";
                     bgColor = "bg-[#EF4444]/10";
+                  } else if (alert.type === 'info') {
+                    Icon = Bell;
+                    iconColor = "text-primary";
+                    bgColor = "bg-primary/10";
                   }
 
+                  const isRead = alert.is_read === 1;
+
                   return (
-                    <div key={alert.id} className={`flex gap-3.5 p-3 rounded-xl cursor-pointer transition-all duration-200 ${alert.read ? 'hover:bg-gray-50' : 'bg-primary/[0.02] hover:bg-primary/5'}`}>
+                    <div 
+                      key={alert.id} 
+                      onClick={() => !isRead && markAsRead(alert.id)}
+                      className={`flex gap-3.5 p-3 rounded-xl cursor-pointer transition-all duration-200 ${isRead ? 'hover:bg-gray-50' : 'bg-primary/[0.02] hover:bg-primary/5'}`}
+                    >
                       <div className={`mt-0.5 flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center ${bgColor}`}>
                         <Icon className={`w-4 h-4 ${iconColor}`} />
                       </div>
                       <div className="flex-1">
-                        <p className={`text-sm font-semibold ${alert.read ? 'text-foreground/80' : 'text-foreground'}`}>{alert.title}</p>
+                        <p className={`text-sm font-semibold ${isRead ? 'text-foreground/80' : 'text-foreground'}`}>{alert.title}</p>
                         <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{alert.message}</p>
-                        <p className="text-[11px] text-gray-400 mt-1.5 font-medium">{alert.time}</p>
+                        <p className="text-[11px] text-gray-400 mt-1.5 font-medium">{new Date(alert.created_at).toLocaleString()}</p>
                       </div>
-                      {!alert.read && (
+                      {!isRead && (
                         <div className="flex-shrink-0 flex items-center h-5 mt-1">
                           <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(37,99,235,0.5)]" />
                         </div>

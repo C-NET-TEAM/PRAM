@@ -371,6 +371,9 @@ app.post('/api/events', authenticateToken, diskUpload.single('file'), async (req
       'INSERT INTO calendar_events (user_id, date, time, timezone, type, caption, channels, status, media_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [req.user.id, date, time, timezone, type, caption, JSON.stringify(channels), 'scheduled', media_path]
     );
+
+    await db.run("INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)", [req.user.id, 'Post Scheduled 📅', `Your post has been scheduled for ${date} at ${time}.`, 'info']);
+
     const newEvent = await db.get('SELECT * FROM calendar_events WHERE id = ?', [result.lastID]);
     newEvent.channels = newEvent.channels ? JSON.parse(newEvent.channels) : [];
     res.json(newEvent);
@@ -406,7 +409,7 @@ app.get('/api/auth/facebook', (req, res) => {
 
     // Pass user ID in the state parameter
     const state = user.id;
-    const scope = 'pages_manage_posts,pages_read_engagement,pages_show_list,instagram_basic,instagram_content_publish,business_management';
+    const scope = 'pages_manage_posts,pages_read_engagement,pages_show_list,instagram_basic,instagram_content_publish,instagram_manage_insights,business_management';
 
     const fbAuthUrl = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}`;
     res.redirect(fbAuthUrl);
@@ -738,6 +741,87 @@ app.post('/api/social/post', authenticateToken, upload.single('file'), async (re
   }
 });
 
+// --- NOTIFICATIONS ---
+app.get('/api/notifications', authenticateToken, async (req, res) => {
+  try {
+    const notifications = await db.all('SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 50', [req.user.id]);
+    res.json(notifications);
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.put('/api/notifications/:id/read', authenticateToken, async (req, res) => {
+  try {
+    await db.run('UPDATE notifications SET is_read = 1 WHERE id = ? AND user_id = ?', [req.params.id, req.user.id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.put('/api/notifications/read-all', authenticateToken, async (req, res) => {
+  try {
+    await db.run('UPDATE notifications SET is_read = 1 WHERE user_id = ?', [req.user.id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// --- ANALYTICS ---
+app.get('/api/analytics', authenticateToken, async (req, res) => {
+  try {
+    const totalPosts = await db.get("SELECT COUNT(*) as count FROM calendar_events WHERE user_id = ?", [req.user.id]);
+    const scheduledPosts = await db.get("SELECT COUNT(*) as count FROM calendar_events WHERE user_id = ? AND status = 'scheduled'", [req.user.id]);
+    const publishedPosts = await db.get("SELECT COUNT(*) as count FROM calendar_events WHERE user_id = ? AND status = 'posted'", [req.user.id]);
+    const failedPosts = await db.get("SELECT COUNT(*) as count FROM calendar_events WHERE user_id = ? AND status = 'failed'", [req.user.id]);
+
+    const cachedAnalytics = await db.all("SELECT * FROM analytics_cache WHERE user_id = ?", [req.user.id]);
+
+    let totalReach = 0;
+    cachedAnalytics.forEach(c => totalReach += c.total_reach);
+
+    const allPosts = await db.all("SELECT channels FROM calendar_events WHERE user_id = ?", [req.user.id]);
+    const counts = { Facebook: 0, Instagram: 0, LinkedIn: 0, X: 0 };
+    allPosts.forEach(post => {
+      try {
+        const channels = JSON.parse(post.channels || '[]');
+        channels.forEach(ch => { if(counts[ch] !== undefined) counts[ch]++; });
+      } catch(e) {}
+    });
+    
+    const platformDistribution = Object.keys(counts)
+      .filter(key => counts[key] > 0)
+      .map(key => ({ name: key, value: counts[key] }));
+
+    const topPostsRaw = await db.all("SELECT * FROM calendar_events WHERE user_id = ? AND status = 'posted' ORDER BY id DESC LIMIT 5", [req.user.id]);
+    const topPosts = topPostsRaw.map(p => ({
+      id: p.id,
+      content: p.caption || 'Media only post',
+      platform: JSON.parse(p.channels || '[]').join(', '),
+      engagement: '-',
+      reach: '-',
+      status: 'active'
+    }));
+
+    res.json({
+      overview: [
+        { label: 'Total Reach', value: totalReach.toString(), change: '', trend: 'neutral' },
+        { label: 'Published Posts', value: publishedPosts.count.toString(), change: '', trend: 'neutral' },
+        { label: 'Scheduled', value: scheduledPosts.count.toString(), change: '', trend: 'neutral' },
+        { label: 'Failed', value: failedPosts.count.toString(), change: '', trend: 'neutral' }
+      ],
+      platformDistribution: platformDistribution.length > 0 ? platformDistribution : [ {name: 'None', value: 1} ],
+      topPosts,
+      cachedAnalytics
+    });
+  } catch (err) {
+    console.error('Analytics error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // --- BACKGROUND CRON JOB FOR SCHEDULER ---
 cron.schedule('* * * * *', async () => {
   if (!db) return;
@@ -973,20 +1057,91 @@ cron.schedule('* * * * *', async () => {
         if (platforms.length === 0) {
           // If no valid platforms, fail it
           await db.run("UPDATE calendar_events SET status = 'failed' WHERE id = ?", [event.id]);
+          await db.run("INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)", [event.user_id, 'Post Failed', 'No valid platforms connected to post.', 'error']);
         } else if (successCount === platforms.length) {
           // All succeeded
           await db.run("UPDATE calendar_events SET status = 'posted', social_post_id = ? WHERE id = ?", [lastPostId, event.id]);
+          await db.run("INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)", [event.user_id, 'Post Published! 🎉', `Successfully published to ${platforms.join(', ')}.`, 'success']);
         } else if (successCount > 0) {
           // Partially succeeded
           await db.run("UPDATE calendar_events SET status = 'partial', social_post_id = ? WHERE id = ?", [lastPostId, event.id]);
+          await db.run("INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)", [event.user_id, 'Post Partially Published', `Published to some platforms, but not all.`, 'warning']);
         } else {
           // None succeeded
           await db.run("UPDATE calendar_events SET status = 'failed' WHERE id = ?", [event.id]);
+          await db.run("INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)", [event.user_id, 'Post Failed', `Failed to publish to ${platforms.join(', ')}.`, 'error']);
         }
       }
     }
   } catch (err) {
     console.error('Cron job error:', err);
+  }
+});
+
+// --- BACKGROUND CRON JOB FOR ANALYTICS ---
+// Runs every 4 hours to fetch real analytics from Meta
+cron.schedule('0 */4 * * *', async () => {
+  if (!db) return;
+  try {
+    const postedEvents = await db.all("SELECT * FROM calendar_events WHERE status = 'posted' AND social_post_id IS NOT NULL");
+    
+    for (const event of postedEvents) {
+      const userAccounts = await db.all("SELECT * FROM social_accounts WHERE user_id = ?", [event.user_id]);
+      const fbAccount = userAccounts.find(a => a.platform === 'Facebook');
+      
+      if (!fbAccount) continue;
+
+      let reach = 0;
+      let platform = '';
+
+      if (event.channels.includes('Facebook')) {
+        try {
+          const pagesRes = await fetch(`https://graph.facebook.com/v19.0/${fbAccount.provider_account_id}/accounts?access_token=${fbAccount.access_token}`);
+          const pagesData = await pagesRes.json();
+          if (pagesData.data && pagesData.data.length > 0) {
+            const pageToken = pagesData.data[0].access_token;
+            // Fetch post insights (assuming social_post_id is the FB post id if published there)
+            // Note: In reality, social_post_id might be from IG or FB depending on the first success. 
+            // We just do a best-effort fetch here for the demo.
+            const insightRes = await fetch(`https://graph.facebook.com/v19.0/${event.social_post_id}/insights?metric=post_impressions_unique&access_token=${pageToken}`);
+            const insightData = await insightRes.json();
+            if (insightData.data && insightData.data.length > 0) {
+              reach = insightData.data[0].values[0].value;
+              platform = 'Facebook';
+            }
+          }
+        } catch (e) {
+          console.error('Analytics FB fetch error:', e.message);
+        }
+      }
+
+      // If we found reach > 0, update the cache
+      if (reach > 0 && platform) {
+        // Upsert into analytics cache
+        const existing = await db.get("SELECT * FROM analytics_cache WHERE user_id = ? AND platform = ?", [event.user_id, platform]);
+        if (existing) {
+          await db.run("UPDATE analytics_cache SET total_reach = total_reach + ? WHERE id = ?", [reach, existing.id]);
+        } else {
+          await db.run("INSERT INTO analytics_cache (user_id, platform, total_reach) VALUES (?, ?, ?)", [event.user_id, platform, reach]);
+        }
+
+        // Generate milestone notification if reach is notably high (e.g. > 100)
+        // Here we just mock a milestone at 100 for demonstration if it hasn't been notified yet.
+        if (reach > 100) {
+           const notifExists = await db.get("SELECT * FROM notifications WHERE user_id = ? AND title LIKE '%Milestone%' AND message LIKE ?", [event.user_id, `%${event.social_post_id}%`]);
+           if (!notifExists) {
+             await db.run("INSERT INTO notifications (user_id, title, message, type) VALUES (?, ?, ?, ?)", [
+               event.user_id, 
+               'Analytics Milestone! 🎉', 
+               `Your recent post (${event.social_post_id}) just reached over ${reach} people!`,
+               'success'
+             ]);
+           }
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Analytics cron error:', err);
   }
 });
 

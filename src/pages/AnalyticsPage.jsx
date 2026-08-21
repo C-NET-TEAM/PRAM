@@ -14,6 +14,30 @@ const FILTERS = ['7 Days', '15 Days', '30 Days', '3 Months', '6 Months', '1 Year
 export default function AnalyticsPage() {
   const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState('30 Days');
+  const [analyticsData, setAnalyticsData] = useState(MOCK_ANALYTICS);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    fetch('/api/analytics', {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) {
+          setAnalyticsData(prev => ({
+            ...prev,
+            overview: data.overview,
+            platformDistribution: data.platformDistribution,
+            topPosts: data.topPosts
+          }));
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching analytics:', err);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className="space-y-6 pb-10">
@@ -45,83 +69,91 @@ export default function AnalyticsPage() {
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {MOCK_ANALYTICS.overview.map((metric, idx) => (
+        {analyticsData.overview.map((metric, idx) => (
           <MetricCard key={idx} {...metric} />
         ))}
       </div>
 
-      {/* Charts row 1 */}
+      {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2 min-w-0 overflow-hidden">
-          <CardHeader>
-            <h3 className="text-lg font-bold text-foreground">{t('analytics.growth', 'Performance Overview')}</h3>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px] w-full min-w-0 relative">
-              <div className="absolute inset-0">
+        {/* Performance Chart */}
+        <div className="lg:col-span-2">
+          <Card className="h-full">
+            <CardHeader>
+              <h3 className="text-lg font-bold text-foreground">{t('analytics.growth', 'Performance Overview')}</h3>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={MOCK_ANALYTICS.performanceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <AreaChart data={analyticsData.performanceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorReach" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#4f46e5" stopOpacity={0}/>
                       </linearGradient>
-                      <linearGradient id="colorEngagement" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#22C55E" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#22C55E" stopOpacity={0}/>
+                      <linearGradient id="colorEng" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#ec4899" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#ec4899" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--color-muted-foreground)', fontSize: 12 }} dy={10} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--color-muted-foreground)', fontSize: 12 }} width={40} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                    <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => value >= 1000 ? `${value/1000}k` : value} />
                     <Tooltip 
-                      contentStyle={{ borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                      contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--foreground))' }}
+                      itemStyle={{ color: 'hsl(var(--foreground))' }}
                     />
-                    <Area type="monotone" dataKey="reach" stroke="var(--color-primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorReach)" />
-                    <Area type="monotone" dataKey="engagement" stroke="#22C55E" strokeWidth={3} fillOpacity={1} fill="url(#colorEngagement)" />
+                    <Area type="monotone" dataKey="reach" stroke="#4f46e5" strokeWidth={3} fillOpacity={1} fill="url(#colorReach)" />
+                    <Area type="monotone" dataKey="engagement" stroke="#ec4899" strokeWidth={3} fillOpacity={1} fill="url(#colorEng)" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
 
-        <Card className="min-w-0 overflow-hidden">
-          <CardHeader>
-            <h3 className="text-lg font-bold text-foreground">{t('analytics.performance', 'Platform Distribution')}</h3>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center justify-center">
-            <div className="h-[250px] w-full min-w-0 relative">
-              <div className="absolute inset-0">
+        {/* Platform Distribution */}
+        <div>
+          <Card className="h-full">
+            <CardHeader>
+              <h3 className="text-lg font-bold text-foreground">{t('analytics.performance', 'Platform Distribution')}</h3>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[220px] w-full relative">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={MOCK_ANALYTICS.platformDistribution}
+                      data={analyticsData.platformDistribution}
+                      cx="50%"
+                      cy="50%"
                       innerRadius={60}
-                      outerRadius={90}
+                      outerRadius={80}
                       paddingAngle={5}
                       dataKey="value"
                     >
-                      {MOCK_ANALYTICS.platformDistribution.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      {analyticsData.platformDistribution.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={['#1877F2', '#E4405F', '#0A66C2', '#000000', '#25D366'][index % 5]} />
                       ))}
                     </Pie>
-                    <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}/>
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--foreground))' }}
+                      itemStyle={{ color: 'hsl(var(--foreground))' }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-            </div>
-            <div className="w-full mt-4 space-y-2">
-              {MOCK_ANALYTICS.platformDistribution.map(platform => (
-                <div key={platform.name} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: platform.color }}></div>
-                    <span className="text-muted-foreground">{platform.name}</span>
+              <div className="mt-4 grid grid-cols-2 gap-4">
+                {analyticsData.platformDistribution.map(platform => (
+                  <div key={platform.name} className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full" style={{
+                      backgroundColor: 
+                        platform.name === 'Facebook' ? '#1877F2' : 
+                        platform.name === 'Instagram' ? '#E4405F' : 
+                        platform.name === 'LinkedIn' ? '#0A66C2' : 
+                        platform.name === 'X' ? '#000000' : '#25D366'
+                    }} />
+                    <span className="text-sm font-medium text-foreground">{platform.name}</span>
                   </div>
-                  <span className="font-semibold text-foreground">{platform.value}</span>
-                </div>
-              ))}
-            </div>
           </CardContent>
         </Card>
       </div>
@@ -142,8 +174,8 @@ export default function AnalyticsPage() {
               </tr>
             </thead>
             <tbody>
-              {MOCK_ANALYTICS.topPosts.map((post, idx) => (
-                <tr key={post.id} className={`bg-card hover:bg-gray-50 transition-colors ${idx !== MOCK_ANALYTICS.topPosts.length - 1 ? 'border-b border-border' : ''}`}>
+              {analyticsData.topPosts.length > 0 ? analyticsData.topPosts.map((post, idx) => (
+                <tr key={post.id} className={`bg-card hover:bg-gray-50 transition-colors ${idx !== analyticsData.topPosts.length - 1 ? 'border-b border-border' : ''}`}>
                   <td className="px-6 py-4 font-medium text-foreground max-w-md truncate">
                     {post.content}
                   </td>
@@ -153,7 +185,13 @@ export default function AnalyticsPage() {
                   <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">{post.date}</td>
                   <td className="px-6 py-4 text-right font-bold text-primary">{post.engagement}</td>
                 </tr>
-              ))}
+              )) : (
+                <tr>
+                  <td colSpan="4" className="text-center py-8 text-muted-foreground">
+                    No top posts yet
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

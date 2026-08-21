@@ -7,21 +7,48 @@ import { MOCK_ALERTS } from '../constants/dummyData';
 
 export default function AlertsPage() {
   const { t } = useTranslation();
-  const [alerts, setAlerts] = useState(MOCK_ALERTS);
+  const [alerts, setAlerts] = useState([]);
 
-  const markAsRead = (id) => {
-    setAlerts(alerts.map(alert => alert.id === id ? { ...alert, read: true } : alert));
+  React.useEffect(() => {
+    fetch('/api/notifications', {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) setAlerts(data);
+      })
+      .catch(console.error);
+  }, []);
+
+  const markAsRead = async (id) => {
+    try {
+      await fetch(`/api/notifications/${id}/read`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      setAlerts(alerts.map(alert => alert.id === id ? { ...alert, is_read: 1 } : alert));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const markAllAsRead = () => {
-    setAlerts(alerts.map(alert => ({ ...alert, read: true })));
+  const markAllAsRead = async () => {
+    try {
+      await fetch('/api/notifications/read-all', {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      });
+      setAlerts(alerts.map(alert => ({ ...alert, is_read: 1 })));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const removeAlert = (id) => {
     setAlerts(alerts.filter(alert => alert.id !== id));
   };
 
-  const unreadCount = alerts.filter(a => !a.read).length;
+  const unreadCount = alerts.filter(a => !a.is_read).length;
 
   const getIcon = (type) => {
     switch(type) {
@@ -74,10 +101,12 @@ export default function AlertsPage() {
             <p className="text-muted-foreground">No new alerts at the moment.</p>
           </div>
         ) : (
-          alerts.map(alert => (
+          alerts.map(alert => {
+            const isRead = alert.is_read === 1;
+            return (
             <Card 
               key={alert.id} 
-              className={`overflow-hidden transition-all duration-300 ${!alert.read ? 'border-l-4 border-l-primary shadow-md' : 'opacity-70'}`}
+              className={`overflow-hidden transition-all duration-300 ${!isRead ? 'border-l-4 border-l-primary shadow-md' : 'opacity-70'}`}
             >
               <div className="p-4 sm:p-6 flex gap-4 sm:gap-6 relative">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${getBg(alert.type)} border`}>
@@ -86,18 +115,18 @@ export default function AlertsPage() {
                 
                 <div className="flex-1">
                   <div className="flex justify-between items-start mb-1">
-                    <h4 className={`font-bold text-foreground ${!alert.read ? 'text-lg' : 'text-base'}`}>
+                    <h4 className={`font-bold text-foreground ${!isRead ? 'text-lg' : 'text-base'}`}>
                       {alert.title}
                     </h4>
                     <span className="text-xs text-muted-foreground whitespace-nowrap ml-4 font-medium">
-                      {alert.time}
+                      {new Date(alert.created_at).toLocaleString()}
                     </span>
                   </div>
                   <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl">
                     {alert.message}
                   </p>
                   
-                  {!alert.read && (
+                  {!isRead && (
                     <div className="mt-4 flex gap-3">
                       <Button size="sm" onClick={() => markAsRead(alert.id)}>Mark as read</Button>
                       <Button size="sm" variant="ghost" onClick={() => removeAlert(alert.id)}>Dismiss</Button>
@@ -105,7 +134,7 @@ export default function AlertsPage() {
                   )}
                 </div>
 
-                {alert.read && (
+                {isRead && (
                   <button 
                     onClick={() => removeAlert(alert.id)}
                     className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
@@ -115,7 +144,7 @@ export default function AlertsPage() {
                 )}
               </div>
             </Card>
-          ))
+          )})
         )}
       </div>
 

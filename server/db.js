@@ -86,6 +86,35 @@ export async function setupDatabase() {
     )
   `);
 
+  // Create notifications table
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS notifications (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      title TEXT NOT NULL,
+      message TEXT NOT NULL,
+      type TEXT DEFAULT 'info',
+      is_read INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+    )
+  `);
+
+  // Create analytics_cache table
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS analytics_cache (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      platform TEXT NOT NULL,
+      total_posts INTEGER DEFAULT 0,
+      total_reach INTEGER DEFAULT 0,
+      total_engagement INTEGER DEFAULT 0,
+      last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(user_id, platform),
+      FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+    )
+  `);
+
   // Seed default user if none exists
   const count = await db.get('SELECT COUNT(*) as count FROM users');
   if (count.count === 0) {

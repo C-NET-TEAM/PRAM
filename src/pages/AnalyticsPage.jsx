@@ -57,8 +57,8 @@ export default function AnalyticsPage() {
             <h3 className="text-lg font-bold text-foreground">{t('analytics.growth', 'Performance Overview')}</h3>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="h-[300px] w-full min-w-0">
+              <ResponsiveContainer width="99%" height="100%">
                 <AreaChart data={MOCK_ANALYTICS.performanceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorReach" x1="0" y1="0" x2="0" y2="1">
@@ -89,8 +89,8 @@ export default function AnalyticsPage() {
             <h3 className="text-lg font-bold text-foreground">{t('analytics.performance', 'Platform Distribution')}</h3>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center">
-            <div className="h-[250px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="h-[250px] w-full min-w-0">
+              <ResponsiveContainer width="99%" height="100%">
                 <PieChart>
                   <Pie
                     data={MOCK_ANALYTICS.platformDistribution}
